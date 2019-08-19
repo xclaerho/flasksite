@@ -1,0 +1,114 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('elections') }}">Stemmingen</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ election.name }}</li>
+            </ol>
+        </nav>
+
+        <h1 class="text-primary text-center">{{ election.name }}</h1>
+        
+        <div class="d-flex justify-content-end mb-3">
+            <form method="POST" action="{{ url_for('elections_toggle_visibility',id=election.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-primary btn-sm mx-2">{% if election.open %}Onzichtbaar maken{% else %}Zichtbaar maken{% endif %}</button>
+            </form>
+            <form method="POST" action="{{ url_for('elections_delete',id=election.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-danger btn-sm mx-2">Verwijderen <i class="fas fa-trash"></i></button>
+            </form>
+        </div>
+
+        <h4 class="text-center">Resultaten</h4>
+        <small class="text-center">Stemmen per persoon: {{ election.votesperperson }}</small>
+        <ul class="list-group mb-2">
+        {% for option in options %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ option.name }}: {{ vote_count[option.id] }}
+                <form method="POST" action="{{ url_for('elections_delete_option',electionid=election.id,optionid=option.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </form>
+            </li>
+        {% endfor %}
+            <li class="list-group-item d-flex justify-content-center align-items-center" data-toggle="collapse" href="#addOptionCollapse" role="button" aria-expanded="false" aria-controls="addOptionCollapse" style="cursor:pointer">
+                <i class="fas fa-plus"></i>
+            </li>
+        </ul>
+
+        <div class="collapse my-2 card card-body shadow" id="addOptionCollapse">
+            <form method="POST" action="">
+                {{ optionform.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        {{ optionform.name.label(class="form-control-label") }}
+
+                        {% if optionform.name.errors %}
+                            {{ optionform.name(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in optionform.name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ optionform.name(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ optionform.submitoption(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+
+        <h4 class="text-center mt-4 mb-1">Updaten</h4>
+        <form method="POST" action="">
+            {{ electionform.hidden_tag() }}
+            <fieldset class="form-group">
+                <div class="form-group">
+                    {{ electionform.name.label(class="form-control-label") }}
+
+                    {% if electionform.name.errors %}
+                        {{ electionform.name(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in electionform.name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ electionform.name(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ electionform.votesperperson.label(class="form-control-label") }}
+
+                    {% if electionform.votesperperson.errors %}
+                        {{ electionform.votesperperson(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in electionform.votesperperson.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ electionform.votesperperson(class="form-control") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group text-center">
+                {{ electionform.submitelection(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+    // Make sure the form is shown if there is something wrong
+    if(document.querySelector(".invalid-feedback")){
+        $('#addOptionCollapse').collapse('show');
+    }
+    </script>
+{% endblock %}

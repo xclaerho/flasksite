@@ -1,0 +1,90 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Augustjes</li>
+            </ol>
+        </nav>
+        <h1 class="text-primary text-center">Augustjes</h1>
+        <div class="row my-3 text-center">
+            <div class="col-6">
+                <button class="btn btn-primary" data-toggle="collapse" href="#collapseAddAugustje" role="button" aria-expanded="false" aria-controls="collapseAddAugustje">Nieuw</button>
+            </div>
+            <div class="col-6">
+                <a class="btn btn-outline-primary" href="{{ url_for('augustjesubscribers') }}">Abonnees</a>
+            </div>
+        </div>
+
+        <!-- Add augustje form -->
+        <div class="collapse my-2" id="collapseAddAugustje">
+            <div class="card card-body shadow">
+                <form method="POST" action="">
+                    {{ augustje_form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <div class="form-group">
+                            {{ augustje_form.name.label(class="form-control-label") }}
+
+                            {% if augustje_form.name.errors %}
+                                {{ augustje_form.name(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in augustje_form.name.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ augustje_form.name(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ augustje_form.embed.label(class="form-control-label") }}
+
+                            {% if augustje_form.embed.errors %}
+                                {{ augustje_form.embed(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in augustje_form.embed.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ augustje_form.embed(class="form-control") }}
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ augustje_form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <table id="augustjestable" class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Naam</th>
+                    <th scope="col">Datum</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for augustje in augustjes %}
+                <tr>
+                    <td>{{ augustje.name }}</td>
+                    <td>{{ augustje.date.strftime("%d/%m/%Y %H:%M") }}</td>
+                    <td><a href="{{ url_for('augustjes_update',id=augustje.id) }}">Meer</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+    // Make sure the form is shown if there is something wrong
+    if(document.querySelector(".invalid-feedback")){
+        $('#collapseAddAugustje').collapse('show');
+    }
+    </script>
+{% endblock %}

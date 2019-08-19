@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container text-center">
+        <h1 class="text-primary">Praesidiumtools</h1>
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-4 my-1">
+                <a href="{{ url_for('augustjes_admin') }}" style="text-decoration:none">
+                    <div class="card card-body">
+                        <h2 class="text-secondary">Augustjes</h2>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 my-1">
+                <a href="{{ url_for('bar') }}" style="text-decoration:none">
+                    <div class="card card-body">
+                        <h2 class="text-secondary">Bar</h2>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 my-1">
+                <a href="{{ url_for('users') }}" style="text-decoration:none">
+                    <div class="card card-body">
+                        <h2 class="text-secondary">Gebruikers</h2>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-4 my-1">
+                <a href="{{ url_for('inputs') }}" style="text-decoration:none">
+                    <div class="card card-body">
+                        <h2 class="text-secondary">Ideeën/Klachten{% if num_inputs > 0 %} <span class="badge badge-primary">{{ num_inputs }}</span>{% endif %}</h2>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 my-1">
+                <a href="{{ url_for('users_poef') }}" style="text-decoration:none">
+                    <div class="card card-body">
+                        <h2 class="text-secondary">Poef</h2>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 my-1">
+                <a href="{{ url_for('schachten') }}" style="text-decoration:none">
+                    <div class="card card-body">
+                        <h2 class="text-secondary">Schachten</h2>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-4 my-1">
+                <a href="{{ url_for('elections') }}" style="text-decoration:none">
+                    <div class="card card-body">
+                        <h2 class="text-secondary">Stemmingen</h2>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

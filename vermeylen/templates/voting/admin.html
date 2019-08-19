@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Stemmingen</li>
+            </ol>
+        </nav>
+
+        <h1 class="text-primary text-center">Stemmingen</h1>
+
+        <div class="d-flex justify-content-start">
+            <button class="btn btn-primary my-2 mx-2" data-toggle="collapse" href="#collapseAddElection" role="button" aria-expanded="false" aria-controls="collapseAddElection">Nieuw</button>
+            <a class="btn btn-outline-primary my-2 mx-2" href="{{ url_for('keys') }}">Logins</a>
+        </div>
+
+        <div class="collapse my-2" id="collapseAddElection">
+            <div class="card card-body shadow">
+                <form method="POST" action="">
+                    {{ electionform.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <div class="form-group">
+                            {{ electionform.name.label(class="form-control-label") }}
+
+                            {% if electionform.name.errors %}
+                                {{ electionform.name(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in electionform.name.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ electionform.name(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ electionform.votesperperson.label(class="form-control-label") }}
+
+                            {% if electionform.votesperperson.errors %}
+                                {{ electionform.votesperperson(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in electionform.votesperperson.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ electionform.votesperperson(class="form-control") }}
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ electionform.submitelection(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Stemming</th>
+                    <th scope="col">Zichtbaar?</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for election in elections %}
+                <tr>
+                    <td>{{ election.name }}</td>
+                    <td>{% if election.open == 0 %}Nee{% else %}Ja{% endif %}</td>
+                    <td><a href="{{ url_for('elections_update',id=election.id) }}">Meer</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+    // Make sure the form is shown if there is something wrong
+    if(document.querySelector(".invalid-feedback")){
+        $('#collapseAddElection').collapse('show');
+    }
+    </script>
+{% endblock %}

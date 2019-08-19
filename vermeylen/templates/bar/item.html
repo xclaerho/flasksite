@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('bar') }}">Bar</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ item.name }}</li>
+            </ol>
+        </nav>
+
+        <h1 class="text-center text-primary">{{ item.name }}</h1>
+
+        <div class="card card-body">
+            <form method="POST" action="">
+                {{ itemform.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        {{ itemform.name.label(class="form-control-label") }}
+
+                        {% if itemform.name.errors %}
+                            {{ itemform.name(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in itemform.name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ itemform.name(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ itemform.price.label(class="form-control-label") }}
+
+                        {% if itemform.price.errors %}
+                            {{ itemform.price(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in itemform.price.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ itemform.price(class="form-control") }}
+                        {% endif %}
+                        <small>Indien negatief voorafgegaan door een minteken, gebruik een punt voor kommagetallen en alles na de eerste twee kommagetallen wordt afgerond naar beneden.</small>
+                    </div>
+                    <div class="form-group">
+                        {{ itemform.amount.label(class="form-control-label") }}
+
+                        {% if itemform.amount.errors %}
+                            {{ itemform.amount(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in itemform.amount.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ itemform.amount(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ itemform.category.label(class="form-control-label") }}
+
+                        {% if itemform.category.errors %}
+                            {{ itemform.category(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in itemform.category.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ itemform.category(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="form-group text-center">
+                    {{ itemform.submititem(class="btn btn-primary",value="Update") }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

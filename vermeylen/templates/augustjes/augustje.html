@@ -1,0 +1,95 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1 class="text-primary text-center">
+        Augustje
+    </h1>
+    <p class="text-center">
+        Het enige echte Home Vermeylenboekje. Het verschijnt ongeveer vier keer per jaar, zowel op papier als digitaal.<br>
+        Abonneer je via <strong class="text-primary" data-toggle="collapse" data-target="#collapseSubscribeForm" aria-expanded="false" aria-controls="collapseSubscribeForm" style="cursor:pointer;">dit formulier</strong> gratis op de papieren versie voor dit academiejaar.
+    </p>
+
+    <div class="collapse container" id="collapseSubscribeForm">
+        <div class="card card-body shadow">
+            <form method="POST" action="">
+                {{ subscribe_form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        {{ subscribe_form.name.label(class="form-control-label") }}
+
+                        {% if subscribe_form.name.errors %}
+                            {{ subscribe_form.name(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in subscribe_form.name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ subscribe_form.name(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ subscribe_form.roomnumber.label(class="form-control-label") }}
+
+                        {% if subscribe_form.roomnumber.errors %}
+                            {{ subscribe_form.roomnumber(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in subscribe_form.roomnumber.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ subscribe_form.roomnumber(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        {% if subscribe_form.accept.errors %}
+                            {{ subscribe_form.accept(class="custom-control-input is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in subscribe_form.accept.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ subscribe_form.accept(class="custom-control-input") }}
+                        {% endif %}
+                        {{ subscribe_form.accept.label(class="custom-control-label") }}
+
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ subscribe_form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% for augustje in augustjes %}
+            <a class="card card-body my-2 text-center" href="{{ url_for('augustjes_read',id=augustje.id) }}" style="text-decoration:none">
+                <h2 class="text-secondary">{{ augustje.name }}</h2>
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Link to drive with all augustjes -->
+    <div class="container text-center my-3">
+        <h3 class="text-primary">Ouder</h3>
+        De Google Drive folder met alle oudere Augustjes kun je vinden via onderstaande link.<br><br>
+        <a class="btn btn-outline-primary" href="https://drive.google.com/drive/folders/1Ok_0790kab5zsjKm5qY5dXc-c_PqI6oC?usp=sharing" target="_blank">Augustjes</a>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    {% include 'footer.html' %}
+{% endblock %}
+
+{% block js %}
+    <script>
+        // Make sure the form is shown if there is something wrong
+        if(document.querySelector(".invalid-feedback")){
+            $('#collapseSubscribeForm').collapse('show');
+        }
+    </script>
+{% endblock %}

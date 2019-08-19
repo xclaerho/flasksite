@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('schachten') }}">Schachten</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ schacht.name }}</li>
+            </ol>
+        </nav>
+
+        <h1 class="text-center text-primary">{{ schacht.name }}</h1>
+
+        <form method="POST" action="">
+            {{ schacht_form.hidden_tag() }}
+            <div class="form-group">
+                {% if schacht_form.name.errors %}
+                    {{ schacht_form.name(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in schacht_form.name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ schacht_form.name(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group text-center">
+                {{ schacht_form.submit(class="btn btn-primary",value="Update naam") }}
+            </div>
+        </form>
+
+        <h4>Opdrachten</h4>
+        <ul class="list-group">
+        {% for task in schacht.tasks %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ task.name }} ({{task.points}})
+                <form method="POST" action="{{ url_for('schachten_remove_task', schacht_id=schacht.id, task_id=task.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </form>
+            </li>
+        {% endfor %}
+            <li class="list-group-item d-flex justify-content-center align-items-center">
+                <a href="{{ url_for('schachtenopdrachten') }}">Toevoegen</a>
+            </li>
+        </ul>
+        
+        <div class="row justify-content-center my-4">
+            <!-- hidden form to delete schacht route -->
+            <form method="POST" action="{{ url_for('schachten_delete', id=schacht.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-danger">Verwijder schacht <i class="fas fa-trash"></i></button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Schachten</li>
+            </ol>
+        </nav>
+        <h1 class="text-primary text-center">Schachten</h1>
+        <div class="row my-3">
+            <div class="col-md-8 my-2">
+                <input id="search" type="text" onkeyup="filterSchachten()" class="form-control" placeholder="Zoek schacht" aria-label="schacht">
+            </div>
+            <div class="col text-center my-2">
+                <button class="btn btn-primary" data-toggle="collapse" href="#collapseAddSchacht" role="button" aria-expanded="false" aria-controls="collapseAddSchacht">Nieuw</button>
+            </div>
+            <div class="col text-center my-2">
+                <a class="btn btn-outline-primary" href="{{ url_for('schachtenopdrachten') }}">Opdrachten</a>
+            </div>
+        </div>
+        
+        <!-- Add schacht form -->
+        <div class="collapse my-2" id="collapseAddSchacht">
+            <div class="card card-body shadow">
+                <form method="POST" action="">
+                    {{ schacht_form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <div class="form-group">
+                            {{ schacht_form.name.label(class="form-control-label") }}
+
+                            {% if schacht_form.name.errors %}
+                                {{ schacht_form.name(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in schacht_form.name.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ schacht_form.name(class="form-control") }}
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ schacht_form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <table id="schachttable" class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Naam</th>
+                    <th scope="col">Punten</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for schacht in schachten %}
+                <tr>
+                    <td>{% if points[schacht.id] >=25 %}<i class="fas fa-check-circle text-success"></i> {% endif %}{{ schacht.name }}</td>
+                    <td>{{ points[schacht.id] }}</td>
+                    <td><a href="{{ url_for('schachten_update', id=schacht.id) }}">Meer</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+    function filterSchachten() {
+        // Declare variables 
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("search");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("schachttable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            } 
+        }
+    }
+    // Make sure the form is shown if there is something wrong
+    if(document.querySelector(".invalid-feedback")){
+        $('#collapseAddSchacht').collapse('show');
+    }
+    </script>
+{% endblock %}

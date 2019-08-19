@@ -1,0 +1,86 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="text-danger text-center">Probeer opnieuw</h1>
+    <form method="POST" action="{{ url_for('muilgraaf_add_link') }}">
+        {{ link_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-group">
+                {{ link_form.person_1.label(class="form-control-label") }}
+
+                {% if link_form.person_1.errors %}
+                    {{ link_form.person_1(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in link_form.person_1.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ link_form.person_1(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ link_form.person_2.label(class="form-control-label") }}
+
+                {% if link_form.person_2.errors %}
+                    {{ link_form.person_2(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in link_form.person_2.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ link_form.person_2(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ link_form.event.label(class="form-control-label") }}
+
+                {% if link_form.event.errors %}
+                    {{ link_form.event(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in link_form.event.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ link_form.event(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ link_form.location.label(class="form-control-label") }}
+
+                {% if link_form.location.errors %}
+                    {{ link_form.location(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in link_form.location.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ link_form.location(class="form-control") }}
+                {% endif %}
+                <small>Optioneel</small>
+            </div>
+            <div class="form-group">
+                {{ link_form.description.label(class="form-control-label") }}
+
+                {% if link_form.description.errors %}
+                    {{ link_form.description(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in link_form.description.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ link_form.description(class="form-control") }}
+                {% endif %}
+                <small>Optioneel</small>
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ link_form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

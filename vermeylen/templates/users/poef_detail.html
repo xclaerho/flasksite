@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('users_poef') }}">Poef</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ user.fullname }}</li>
+            </ol>
+        </nav>
+        <h1 class="text-primary text-center">{{ user.fullname }}</h1>
+
+        <div class="card card-body shadow">
+            <form method="POST" action="">
+                {{ transaction_form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        {{ transaction_form.amount.label(class="form-control-label") }}
+
+                        {% if transaction_form.amount.errors %}
+                            {{ transaction_form.amount(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in transaction_form.amount.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ transaction_form.amount(class="form-control") }}
+                        {% endif %}
+                        <small>Indien negatief voorafgegaan door een minteken, gebruik een punt voor kommagetallen en alles na de eerste twee kommagetallen wordt afgerond naar beneden.</small>
+                    </div>
+                    <div class="form-group">
+                        {{ transaction_form.description.label(class="form-control-label") }}
+
+                        {% if transaction_form.description.errors %}
+                            {{ transaction_form.description(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in transaction_form.description.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ transaction_form.description(class="form-control") }}
+                        {% endif %}
+                        <small>Optioneel.</small>
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ transaction_form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+        
+        <ul class="list-group my-2">
+        {% for transaction in transactions %}
+            <li class="list-group-item align-items-center">
+                <div class="d-flex justify-content-between">
+                    <span>€ {{ transaction.amount/100 }}</span> <small>{{ transaction.date.strftime("%d/%m/%Y %H:%M") }}</small>
+                </div>
+                <span>{{ transaction.description or "" }}</span>
+                <form method="POST" class="float-right" action="{{ url_for('users_poef_delete', user_id=user.id,transaction_id=transaction.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </form> 
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

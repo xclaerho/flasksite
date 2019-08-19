@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="text-danger text-center">Probeer opnieuw</h1>
+    <form method="POST" action="{{ url_for('muilgraaf_add_person') }}">
+        {{ person_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-group">
+                {{ person_form.name.label(class="form-control-label") }}
+
+                {% if person_form.name.errors %}
+                    {{ person_form.name(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in person_form.name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ person_form.name(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ person_form.club.label(class="form-control-label") }}
+
+                {% if person_form.club.errors %}
+                    {{ person_form.club(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in person_form.club.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ person_form.club(class="form-control") }}
+                {% endif %}
+                <small>Optioneel</small>
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ person_form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

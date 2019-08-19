@@ -1,0 +1,88 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('schachten') }}">Schachten</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('schachtenopdrachten') }}">Opdrachten</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ opdracht.name }}</li>
+            </ol>
+        </nav>
+        <h1 class="text-center text-primary">{{ opdracht.name }}</h1>
+
+        <form method="POST" action="">
+            {{ opdracht_form.hidden_tag() }}
+            <fieldset class="form-group">
+                <div class="form-group">
+                    {{ opdracht_form.name.label(class="form-control-label") }}
+
+                    {% if opdracht_form.name.errors %}
+                        {{ opdracht_form.name(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in opdracht_form.name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ opdracht_form.name(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ opdracht_form.points.label(class="form-control-label") }}
+
+                    {% if opdracht_form.points.errors %}
+                        {{ opdracht_form.points(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in opdracht_form.points.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ opdracht_form.points(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ opdracht_form.description.label(class="form-control-label") }}
+
+                    {% if opdracht_form.description.errors %}
+                        {{ opdracht_form.description(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in opdracht_form.description.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ opdracht_form.description(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ opdracht_form.schachten.label(class="form-control-label") }}
+
+                    {% if opdracht_form.schachten.errors %}
+                        {{ opdracht_form.schachten(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in opdracht_form.schachten.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ opdracht_form.schachten(class="form-control") }}
+                    {% endif %}
+                    <small>Houdt control ingedrukt en klik de schachten terwijl aan om er meerdere te selecteren.</small>
+                </div>
+            </fieldset>
+            <div class="form-group text-center">
+                {{ opdracht_form.submit(class="btn btn-primary",value="Update opdracht") }}
+            </div>
+        </form>
+
+        <div class="row justify-content-center my-4">
+            <!-- hidden form to delete schacht route -->
+            <form method="POST" action="{{ url_for('schachtenopdrachten_delete', id=opdracht.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-danger">Verwijder opdracht <i class="fas fa-trash"></i></button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('augustjes_admin') }}">Augustjes</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ augustje.name }}</li>
+            </ol>
+        </nav>
+        <h1 class="text-primary text-center">{{ augustje.name }}</h1>
+
+        <form method="POST" action="">
+            {{ augustje_form.hidden_tag() }}
+            <fieldset class="form-group">
+                <div class="form-group">
+                    {{ augustje_form.name.label(class="form-control-label") }}
+
+                    {% if augustje_form.name.errors %}
+                        {{ augustje_form.name(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in augustje_form.name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ augustje_form.name(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ augustje_form.embed.label(class="form-control-label") }}
+
+                    {% if augustje_form.embed.errors %}
+                        {{ augustje_form.embed(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in augustje_form.embed.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ augustje_form.embed(class="form-control") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group text-center">
+                {{ augustje_form.submit(class="btn btn-primary",value="Update augustje") }}
+            </div>
+        </form>
+
+        <div class="row justify-content-center my-4">
+            <!-- hidden form to delete schacht route -->
+            <form method="POST" action="{{ url_for('augustjes_delete', id=augustje.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-danger">Verwijder augustje <i class="fas fa-trash"></i></button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container text-center">
+        <h1 class="text-primary mb-3">Agenda</h1>
+        <!-- spinner to indicate calendar is loading -->
+        <div id="loadscreen" class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+ 
+        {% raw %}
+        <div id="calendar" style="display: none">
+            <div class="text-center mb-3">
+                <a class="btn btn-outline-primary" href="https://calendar.google.com/calendar/r?cid=vermeylen@hkserv.ugent.be" target="_blank"><i class="fab fa-google"></i> Toevoegen aan Google Calendar</a>
+            </div>
+            <div class="list-group list-group-flush">
+                <li v-for="event in items" class="list-group-item">
+                    <div class="text-left">
+                        {{ new Date(event.start.dateTime || event.start.date).toLocaleDateString([], { day: "numeric", month: "long", year: "numeric" }).toUpperCase() }}
+                    </div>
+                    <div>
+                        <strong>{{ event.summary }}</strong>
+                        <p v-if="event.start.dateTime || event.location || event.description">
+                            {{ event.start.dateTime? "Start: " + new Date(event.start.dateTime).toLocaleTimeString([], {hour: "numeric", minute:"numeric"}) : "" }}
+                            <br v-if="event.location">
+                            {{ event.location? "Locatie: " + event.location : ""}}</p>
+                            <br v-if="event.description">
+                            {{ event.description? event.description : "" }}
+                        </p>
+                    </div>
+                </li>
+            </div>
+        </div>
+        {% endraw %}
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <!-- vuejs -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
+    <script>
+        var API_KEY = 'AIzaSyBmLSsecQmN5wKP2X7x78RfNnsTILc_ETE';
+
+        function handleClientLoad() {
+            gapi.client.setApiKey(API_KEY)
+            gapi.client.load('calendar', 'v3', getCalendar);
+        }
+
+        function getCalendar() {
+            var timeMin = new Date().toISOString();
+            gapi.client.calendar.events.list({
+                'calendarId': "vermeylen@hkserv.ugent.be",
+                'singleEvents': 'true',
+                'timeMin': timeMin,
+                'fields': 'items(description,location,start,summary)',
+                'orderBy': 'startTime'
+            }).then(setCalendar, errorLoading);
+        }
+
+        function setCalendar(feed) {
+            calendar = feed.result;
+            console.log(feed.result.items);
+            var calendar = new Vue({
+                el: '#calendar',
+                data: calendar,
+            });
+            // Remove spinner and show calendar
+            let spinner = document.querySelector("#loadscreen");
+            spinner.parentNode.removeChild(spinner);
+            document.querySelector("#calendar").style.display = "block";
+        }
+
+        function errorLoading() {
+            console.log("Error while loading calendar");
+        }
+    </script>
+    <!-- callback to google to start loading calendar when ready -->
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+{% endblock %}

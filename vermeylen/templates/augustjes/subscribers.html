@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('augustjes_admin') }}">Augustjes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Abonnees</li>
+        </ol>
+    </nav>
+    <h1 class="text-primary text-center">Abonnees</h1>
+    <table id="abonneestable" class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Naam</th>
+                    <th scope="col">Adres</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for subscriber in subscribers %}
+                <tr>
+                    <td>{{ subscriber.name }}</td>
+                    <td>{{ subscriber.address }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('augustjesubscribers_delete', id=subscriber.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+{% endblock %}

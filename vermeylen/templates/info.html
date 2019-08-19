@@ -1,0 +1,154 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container my-3">
+		<!-- Row height 100 to make vertical columns -->
+		<div class="row h-100">
+			<!-- Left column -->
+			<div class="col-md-6">
+				<div class="mb-3">
+					<h3 class="text-primary text-center">Algemene info</h3>
+					<h5>Adres</h5>
+					Home Vermeylen<br>
+					Kamer xxx<br>
+					Stalhof 6<br>
+					9000 Gent<br>
+					<h5 class="mt-3">Rekeningnummer</h5>
+					BE36 8915 8420 9081
+					<h5 class="mt-3">Openingsuren receptie</h5>
+					<strong>Administratie</strong><br>
+					Maandag t.e.m. vrijdag: 8u tot 12u en 13u tot 16.30u<br>
+					<strong>Onthaal</strong><br>
+					Maandag t.e.m. vrijdag: 8u tot 12u en 13u tot 20u<br>
+					In februari, juli, augustus en september is het onthaal ook open in het weekend, van 10u tot 20u.
+					<h5 class="mt-3">Permanentie</h5>
+					De dienst permanentie is 24/7 bereikbaar voor technische storingen en incidenten. Klik <a href="https://www.ugent.be/intranet/nl/op-het-werk/perc" target="_blank">hier</a> voor meer info.
+					<h5 class="mt-3">Statuten</h5>
+					<a href="{{ url_for('static', filename='statuten.pdf') }}" target="_blank">Hier</a> vind je onze statuten terug.
+				</div>
+				<div class="mb-3">
+					<h3 class="text-primary text-center">Handige links</h3>
+					<a href="https://www.ugent.be/" target="_blank">Universiteit Gent</a><br>
+					<a href="http://www.homekonvent.be/" target="_blank">Home Konvent</a><br>
+					<a href="http://herstelformulier.ugent.be/" target="_blank">Herstelformulier</a><br>
+					<a href="https://helpdesk.ugent.be/" target="_blank">ICT-helpdesk</a><br>
+				</div>
+			</div>
+
+			<!-- Right column -->
+			<div class="col-md-6" id="accordion">
+				<div class="card mb-2">
+					<div class="card-header" style="cursor:pointer;" id="fbGroupsHeading" data-toggle="collapse" data-target="#fbGroups" aria-expanded="true" aria-controls="fbGroups">
+							Facebook groepen
+					</div>
+
+					<div id="fbGroups" class="collapse" aria-labelledby="fbGroupsHeading" data-parent="#accordion">
+						<div class="card-body">
+							Elk verdiep heeft zijn eigen facebook groep. Daarnaast zijn er ook nog enkele algemene groepen. Zeker de moeite om in te zitten!
+							<ul>
+								<li>
+									<a href="https://www.facebook.com/groups/837267756380646" target="_blank">Gelijkvloers</a>
+								</li>
+								<li>
+									<a href="https://www.facebook.com/groups/firstfloorvermeylen" target="_blank">Gang 1</a>
+								</li>
+								<li>
+									<a href="https://www.facebook.com/groups/103926336436997" target="_blank">Gang 2</a>
+								</li>
+								<li>
+									<a href="https://www.facebook.com/groups/247842671914445" target="_blank">Gang 3</a>
+								</li>
+								<li>
+									<a href="https://www.facebook.com/groups/234885146568616" target="_blank">Gang 4</a>
+								</li>
+								<li>
+									<a href="https://www.facebook.com/groups/398610506877491" target="_blank">Gang 5</a>
+								</li>
+								<li>
+									<a href="https://www.facebook.com/groups/223290271017961" target="_blank">Gang 6</a>
+								</li>
+								<li>
+									<a href="https://www.facebook.com/groups/vermeylen7" target="_blank">Gang 7</a>
+								</li>
+								<li>
+									<a href="https://www.facebook.com/groups/197479463657300" target="_blank">Gang 8</a>
+								</li>
+								<br>
+								<li>
+									<a href="https://www.facebook.com/groups/618188701702137" target="_blank">Residentienieuws</a>
+								</li>
+								<li>
+									<a href="https://www.facebook.com/groups/homevermeylen" target="_blank">Home Vermeylen</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="card mb-2">
+					<div class="card-header" style="cursor:pointer;" id="socialsHeading" data-toggle="collapse" data-target="#socials" aria-expanded="true" aria-controls="socials">
+							Social media
+					</div>
+
+					<div id="socials" class="collapse" aria-labelledby="socialsHeading" data-parent="#accordion">
+						<div class="card-body">
+							<div class="row text-center pb-3">
+                                <div class="col-4">
+                                    <a title="Facebook" target="_blank"  href="https://www.facebook.com/Home-Vermeylen-845283782203005/">
+                                        <i class="fab fa-facebook-f fa-2x"></i>
+                                    </a>
+                                </div>
+                                <div class="col-4">
+                                    <a href="https://www.instagram.com/homevermeylen/" target="_blank" title="Instagram">
+                                        <i class="fab fa-instagram fa-2x"></i>
+                                    </a>
+                                </div>
+                                <div class="col-4">
+                                    <a href="mailto:homeraadvermeylen@gmail.com" title="Mail">
+                                        <i class="fas fa-at fa-2x"></i>
+                                    </a>
+                                </div>
+                            </div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card mb-2">
+					<div class="card-header" style="cursor:pointer;" id="internetHeading" data-toggle="collapse" data-target="#internetCard" aria-expanded="true" aria-controls="internetCard">
+							Internet (VPN)
+					</div>
+
+					<div id="internetCard" class="collapse" aria-labelledby="internetHeading" data-parent="#accordion">
+						<div class="card-body">
+							Voor problemen of info in verband met je VPN-verbinding kan je altijd op de site van de <a href="https://helpdesk.ugent.be" target="_blank">DICT</a> terecht. Voor deze site heb je geen werkende verbinding nodig, je zou ze dus zonder problemen moeten kunnen raadplegen.<br> 
+							Als basic troubleshooting kan je wel al proberen je computer eens opnieuw op te starten of de kabel er eens uit te halen. Als dat niet werkt, herinstalleer de VPN-client dan.
+						</div>
+					</div>
+				</div>
+
+				<div class="card mb-2">
+					<div class="card-header" style="cursor:pointer;" id="preventieStudentenHeading" data-toggle="collapse" data-target="#preventieStudenten" aria-expanded="true" aria-controls="preventieStudenten">
+							Preventiestudenten
+					</div>
+
+					<div id="preventieStudenten" class="collapse" aria-labelledby="preventieStudentenHeading" data-parent="#accordion">
+						<div class="card-body">
+							Preventiestudenten zijn een eerste aanspreekpunt bij brand of ongevallen. Ze hebben een korte brandweer- en EHBO-opleiding gekregen, en hebben een EHBO-koffer op hun kot. Je vindt ze op de volgende kamers:<br>
+							312, 328, 329, 350<br>
+							422, 453, 454<br> 
+							629<br>
+							740, 744<br>
+							822, 851
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+
+		</div>
+	</div>
+{% endblock %}
+
+{% block footer %}
+    {% include 'footer.html' %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('elections') }}">Stemmingen</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Logins</li>
+            </ol>
+        </nav>
+
+        <h1 class="text-primary text-center mb-3">Logins</h1>
+        
+        <div class="d-flex justify-content-center">
+            <form method="POST" action="" class="mx-2">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-primary btn-sm">Nieuw</button>
+            </form>
+            <form method="POST" action="{{ url_for('delete_all_keys') }}" class="mx-2">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-danger btn-sm">Alles verwijderen <i class="fas fa-trash"></i></button>
+            </form>
+        </div>
+
+        <ul class="list-group my-3">
+        {% for key in keys %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ key.key }}
+                <form method="POST" action="{{ url_for('keys_delete',id=key.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </form>
+            </li>
+        {% endfor %}
+        </ul>
+        
+    </div>
+{% endblock %}

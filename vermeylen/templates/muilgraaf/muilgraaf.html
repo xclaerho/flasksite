@@ -1,0 +1,388 @@
+{% extends 'layout.html' %}
+{% block header %}
+    <style>
+        body{
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0,0,0,0.6)), url({{ url_for('static', filename='homevermeylen.jpg') }}) no-repeat center center fixed;
+            background-size: cover;
+            color: black !important; 
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='muilgraaf/vis.min.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="container text-center">
+        <div class="row my-3 justify-content-center">
+                <button class="btn btn-primary mx-2" data-toggle="modal" data-target="#infoModal">Info</button>
+                <button class="btn btn-primary mx-2" data-toggle="modal" data-target="#addModal">Uitbreiden</button>
+        </div>
+    </div>
+
+    <div id="muilgraaf" style="height: 70vh"></div>
+
+    <!-- Modal with info -->
+    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">Info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6>Legende</h6>
+                    <ul>
+                        <li>Personen</li>
+                        <ul>
+                            <li>Blauwe bollen: Vermeylen</li>
+                            <li>Andere kleur: niet Vermeylen</li>
+                        </ul>
+                        <li>Links</li>
+                        <ul>
+                            <li>Groen: Gemuild</li>
+                            <li>Oranje: Relatie</li>
+                            <li>Blauw met pijltjes: Seks</li>
+                        </ul>
+                    </ul>
+                    <br>
+                    Bij problemen of opmerkingen: stuur de ICT.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to add -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Uitbreiden</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-pills justify-content-center" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="link-tab" data-toggle="tab" href="#link" role="tab" aria-controls="link" aria-selected="true">Link</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="person-tab "data-toggle="tab" href="#person" role="tab" aria-controls="person" aria-selected="false">Persoon</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="link" role="tabpanel" aria-labelledby="link-tab">
+                            <form method="POST" action="{{ url_for('muilgraaf_add_link') }}">
+                                {{ link_form.hidden_tag() }}
+                                <fieldset class="form-group">
+                                    <div class="form-group">
+                                        {{ link_form.person_1.label(class="form-control-label") }}
+
+                                        {% if link_form.person_1.errors %}
+                                            {{ link_form.person_1(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in link_form.person_1.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ link_form.person_1(class="form-control") }}
+                                        {% endif %}
+                                        <small>Staat de persoon er niet tussen? Voeg hem dan eerst toe.</small>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ link_form.person_2.label(class="form-control-label") }}
+
+                                        {% if link_form.person_2.errors %}
+                                            {{ link_form.person_2(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in link_form.person_2.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ link_form.person_2(class="form-control") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ link_form.event.label(class="form-control-label") }}
+
+                                        {% if link_form.event.errors %}
+                                            {{ link_form.event(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in link_form.event.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ link_form.event(class="form-control") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ link_form.location.label(class="form-control-label") }}
+
+                                        {% if link_form.location.errors %}
+                                            {{ link_form.location(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in link_form.location.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ link_form.location(class="form-control") }}
+                                        {% endif %}
+                                        <small>Optioneel</small>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ link_form.description.label(class="form-control-label") }}
+
+                                        {% if link_form.description.errors %}
+                                            {{ link_form.description(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in link_form.description.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ link_form.description(class="form-control") }}
+                                        {% endif %}
+                                        <small>Optioneel</small>
+                                    </div>
+                                </fieldset>
+                                <div class="form-group">
+                                    {{ link_form.submit(class="btn btn-primary") }}
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="person" role="tabpanel" aria-labelledby="person-tab">
+                            <form method="POST" action="{{ url_for('muilgraaf_add_person') }}">
+                                {{ person_form.hidden_tag() }}
+                                <fieldset class="form-group">
+                                    <div class="form-group">
+                                        {{ person_form.name.label(class="form-control-label") }}
+
+                                        {% if person_form.name.errors %}
+                                            {{ person_form.name(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in person_form.name.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ person_form.name(class="form-control") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ person_form.club.label(class="form-control-label") }}
+
+                                        {% if person_form.club.errors %}
+                                            {{ person_form.club(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in person_form.club.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ person_form.club(class="form-control") }}
+                                        {% endif %}
+                                        <small>Optioneel</small>
+                                    </div>
+                                </fieldset>
+                                <div class="form-group">
+                                    {{ person_form.submit(class="btn btn-primary") }}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% raw %}
+    <div id="detailModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{name}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div v-for="event in events">
+                    <h5 class="mt-3 mb-1">{{ event.person_2 }} <span v-if="event.person_club">({{ event.person_club }})</span></h5>
+                    <div class="container">
+                        <p v-if="event.event" class="my-0"><i>Wat?</i> {{event.event}}</p>
+                        <p v-if="event.location" class="my-0"><i>Waar?</i> {{event.location}}</p>
+                        <p v-if="event.description" class="my-0"><i>Details?</i> {{event.description}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endraw %}
+    
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
+    <script src="{{ url_for('static', filename='muilgraaf/vis.min.js') }}"></script>
+    <script>
+        // Vue to cleanly load the detail modal
+        var vm = new Vue({
+            el: '#detailModal',
+            data: {
+                name: "",
+                events: [],
+            },
+        });
+		// create network off all the data on page load
+		(() => {
+            var people = {
+            {% for person in people %}
+                {{ person.id }}: {
+                    "name": '{{ person.name }}',
+                    "club": '{{ person.club }}',
+                },    
+            {% endfor %}
+            };
+            var links = {
+            {% for link in links %}
+                {{ link.id }}: {
+                    "person_1": {{ link.person_1 }},
+                    "person_2": {{ link.person_2 }},
+                    "event": {{ link.event }},
+                    "location": '{{ link.location }}',
+                    "description": '{{ link.description }}'
+                },
+            {% endfor %}
+            };
+
+			var nodes = [];
+            Object.keys(people).forEach(function(key, index){
+                nodes.push({
+                    "id": key,
+                    "label": people[key].name,
+                    "group": people[key].club
+                })
+            });
+            
+			var edges = [];
+            Object.keys(links).forEach(function(key, index){
+                let color = {color:"#a3f307",highlight:"#a3f307"};
+                let arrows = "";
+                if(links[key].event == 2){
+                    color = {color:"#05f9e2",highlight:"#05f9e2"};
+                    arrows = "to;from";
+                } else if(links[key].event == 3){
+                    color = {color:"#ff6f00",highlight:"#ff6f00"};
+                }
+                edges.push({
+                    "id": key,
+                    "from": links[key].person_1,
+                    "to": links[key].person_2,
+                    "color": color,
+                    "arrows": arrows
+                })
+            });
+
+			// create a network
+			var container = document.getElementById('muilgraaf');
+			var data = {
+				nodes: nodes,
+				edges: edges
+			};
+
+			var options = {
+				"nodes": {
+				"borderWidth": 0,
+				"color": {
+					"highlight": {},
+					"hover": {}
+				},
+				"font": {
+					"color": "white",
+					"face": "Verdana",
+					"background": "black",
+					"size": 20
+				},
+				"shape": "dot",
+				"size": 30
+                },
+                "edges": {
+                    "selectionWidth": 4,
+                    "smooth": false,
+                    "width": 2,
+                    "arrows" :{
+                        "to": {
+                            "scaleFactor": 0.75
+                        },
+                        "from": {
+                            "scaleFactor": 0.75
+                        }
+                    }
+                },
+                "layout": {
+                        "hierarchical": {
+                        "enabled": false,
+                        "levelSeparation": 150,
+                        "nodeSpacing": 200,
+                        "treeSpacing": 80,
+                        "sortMethod": "directed"
+                    }
+                },
+                "physics": {
+                    "enabled": true,
+                    "hierarchicalRepulsion": {
+                        'centralGravity': 0.0,
+                        'springLength': 50,
+                        'springConstant': 0.0,
+                        'nodeDistance': 200,
+                        'damping': 1
+                    },
+                    "minVelocity": 0.75,
+                    "solver": "hierarchicalRepulsion"
+                }
+            };
+
+			var network = new vis.Network(container, data, options);
+
+            network.on('selectNode', data => {
+                // Set vue attributes
+                vm.name = people[data.nodes[0]].name;
+                let events = [];
+                data.edges.forEach(edge => {
+                    link = links[edge];
+                    description = link.description;
+                    place = link.location;
+                    event = "Gemuild";
+                    if(link.event == 2){
+                        event = "Seks";
+                    } else if(link.event == 3){
+                        event = "Relatie";
+                    }
+                    person_2 = "";
+                    person_club = "";
+                    if (link.person_1 != data.nodes[0]){
+                        person_2 = people[link.person_1].name;
+                        person_club = people[link.person_1].club;
+                    } else {
+                        person_2 = people[link.person_2].name;
+                        person_club = people[link.person_2].club;
+                    }
+                    events.push({
+                        "description": description,
+                        "location": place,
+                        "event": event,
+                        "person_2": person_2,
+                        "person_club": person_club
+                    });
+                });
+                vm.events = events;
+                $('#detailModal').modal('toggle');
+            });
+		})();
+	</script>
+{% endblock js %}

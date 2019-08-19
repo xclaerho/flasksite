@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Poef</li>
+            </ol>
+        </nav>
+        <h1 class="text-primary text-center">Poef</h1>
+        <div class="row my-3">
+            <div class="col-8">
+                <input id="search" type="text" onkeyup="filterUsers()" class="form-control" placeholder="Zoek gebruiker op naam" aria-label="gebruiker">
+            </div>
+        </div>
+
+
+        <table id="usertable" class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Naam</th>
+                    <th scope="col">Poef</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.fullname }}</td>
+                    <td>€ {{ poef[user.id] }}</td>
+                    <td><a href="{{ url_for('users_poef_update',id=user.id) }}">Meer</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+    function filterUsers() {
+        // Declare variables 
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("search");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("usertable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            } 
+        }
+    }
+    </script>
+{% endblock %}

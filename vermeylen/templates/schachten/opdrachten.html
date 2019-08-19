@@ -1,0 +1,141 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('schachten') }}">Schachten</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Opdrachten</li>
+            </ol>
+        </nav>
+        <h1 class="text-primary text-center">Opdrachten</h1>
+        <div class="row my-3">
+            <div class="col-8">
+                <input id="search" type="text" onkeyup="filterOpdrachten()" class="form-control" placeholder="Zoek opdracht" aria-label="opdracht">
+            </div>
+            <div class="col-4">
+                <button class="btn btn-primary" data-toggle="collapse" href="#collapseAddOpdracht" role="button" aria-expanded="false" aria-controls="collapseAddOpdracht">Nieuw</button>
+            </div>
+        </div>
+        
+        <!-- Add SchachtenOpdracht form -->
+        <div class="collapse my-2" id="collapseAddOpdracht">
+            <div class="card card-body shadow">
+                <form method="POST" action="">
+                    {{ opdracht_form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <div class="form-group">
+                            {{ opdracht_form.name.label(class="form-control-label") }}
+
+                            {% if opdracht_form.name.errors %}
+                                {{ opdracht_form.name(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in opdracht_form.name.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ opdracht_form.name(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ opdracht_form.points.label(class="form-control-label") }}
+
+                            {% if opdracht_form.points.errors %}
+                                {{ opdracht_form.points(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in opdracht_form.points.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ opdracht_form.points(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ opdracht_form.description.label(class="form-control-label") }}
+
+                            {% if opdracht_form.description.errors %}
+                                {{ opdracht_form.description(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in opdracht_form.description.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ opdracht_form.description(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ opdracht_form.schachten.label(class="form-control-label") }}
+
+                            {% if opdracht_form.schachten.errors %}
+                                {{ opdracht_form.schachten(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in opdracht_form.schachten.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ opdracht_form.schachten(class="form-control") }}
+                            {% endif %}
+                            <small>Houdt control ingedrukt en klik de schachten terwijl aan om er meerdere te selecteren.</small>
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ opdracht_form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <table id="opdrachttable" class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Naam</th>
+                    <th scope="col">Punten</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for opdracht in opdrachten %}
+                <tr>
+                    <td>{{ opdracht.name }}</td>
+                    <td>{{ opdracht.points }}</td>
+                    <td><a href="{{ url_for('schachtenopdrachten_update', id=opdracht.id) }}">Meer</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+    function filterOpdrachten() {
+        // Declare variables 
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("search");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("opdrachttable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            } 
+        }
+    }
+    // Make sure the form is shown if there is something wrong
+    if(document.querySelector(".invalid-feedback")){
+        $('#collapseAddOpdracht').collapse('show');
+    }
+    </script>
+{% endblock %}

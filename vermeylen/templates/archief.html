@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container text-center">
+        <h1 class="text-primary">Archief</h1>
+        <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                Praesidia    
+                            </h5>
+                            <iframe src="https://docs.google.com/document/d/e/2PACX-1vRFUmWwS3D3WO-EhL9qISUrXrkE-fltLdxVHTIky6mqDKit9ezqzOT-2EuIMCv7FBAyYNCKuid6keOa/pub?embedded=true"height="400" width="100%"></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                Augustjes    
+                            </h5>
+                            <p class="text-left">
+                                De Google drive met alle edities van het Augustje van de afgelopen jaren kun je via onderstaande link bereiken.
+                            </p>
+                            <a class="btn btn-outline-primary" href="https://drive.google.com/drive/folders/1Ok_0790kab5zsjKm5qY5dXc-c_PqI6oC?usp=sharing" target="_blank">Augustjes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    {% include 'footer.html' %}
+{% endblock %}

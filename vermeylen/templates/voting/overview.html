@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <h1 class="text-primary text-center">Stem</h1>
+    {% if session['voterid'] %}
+        <div class="container">
+            {% for election in elections %}
+            <a href="{{ url_for('vote',id=election.id) }}" style="text-decoration:none" class="text-center">
+                <div class="card card-body mb-2">
+                    <h2 class="text-secondary">{{ election.name }}</h2>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="container text-center">
+            <form method="POST" action="">
+                {{ keyform.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        {{ keyform.key.label(class="form-control-label") }}
+
+                        {% if keyform.key.errors %}
+                            {{ keyform.key(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in keyform.key.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ keyform.key(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ keyform.submitkey(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}

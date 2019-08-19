@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tools') }}">Tools</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('users') }}">Gebruikers</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ user.username }}</li>
+            </ol>
+        </nav>
+
+        <h1 class="text-primary text-center">{{ user.fullname }}</h1>
+
+        <form method="POST" action="">
+            {{ usernameform.hidden_tag() }}
+            <div class="form-group">
+                {{ usernameform.username.label(class="form-control-label") }}
+
+                {% if usernameform.username.errors %}
+                    {{ usernameform.username(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in usernameform.username.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ usernameform.username(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group text-center">
+                {{ usernameform.submitusername(class="btn btn-primary") }}
+            </div>
+        </form>
+
+        <form method="POST" action="">
+            {{ rolesform.hidden_tag() }}
+            <div class="form-group">
+                {{ rolesform.roles.label(class="form-control-label") }}
+
+                {% if rolesform.roles.errors %}
+                    {{ rolesform.roles(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in rolesform.roles.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ rolesform.roles(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group text-center">
+                {{ rolesform.submitroles(class="btn btn-primary") }}
+            </div>
+        </form>
+
+        <form method="POST" action="">
+            {{ passwordform.hidden_tag() }}
+            <div class="form-group">
+                {{ passwordform.password.label(class="form-control-label") }}
+
+                {% if passwordform.password.errors %}
+                    {{ passwordform.password(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in passwordform.password.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ passwordform.password(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group text-center">
+                {{ passwordform.submitpassword(class="btn btn-primary") }}
+            </div>
+        </form>
+
+        <div class="row justify-content-center my-4">
+            <!-- hidden form to delete user route -->
+            <form method="POST" action="/user/{{user.id}}/delete">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-danger">Verwijder gebruiker <i class="fas fa-trash"></i></button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
