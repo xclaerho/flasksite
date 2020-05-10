@@ -59,6 +59,7 @@ def login():
 
 @app.route('/tools')
 @login_required
+@requires_one_of_roles("tools")
 def tools():
     num_inputs = len(Input.query.all())
     return render_template('tools.html', num_inputs=num_inputs)
@@ -66,6 +67,7 @@ def tools():
 # Schachten
 @app.route('/schachten', methods=['GET', 'POST'])
 @login_required
+@requires_one_of_roles("tools")
 def schachten():
     schachten = Schacht.query.all()
     # create dictionary with points for every schacht (list comprehension is not possible in template)
@@ -83,6 +85,7 @@ def schachten():
 
 @app.route('/schachten/<id>', methods=['GET','POST'])
 @login_required
+@requires_one_of_roles("schachten")
 def schachten_update(id):
     schacht = Schacht.query.get_or_404(id)
     schacht_form = SchachtForm()
@@ -96,6 +99,7 @@ def schachten_update(id):
 
 @app.route('/schachten/<schacht_id>/opdracht/<task_id>/delete', methods=['POST'])
 @login_required
+@requires_one_of_roles("schachten")
 def schachten_remove_task(schacht_id, task_id):
     schacht = Schacht.query.get_or_404(schacht_id)
     task = SchachtenOpdracht.query.get_or_404(task_id)
@@ -105,6 +109,7 @@ def schachten_remove_task(schacht_id, task_id):
 
 @app.route('/schachten/<id>/delete', methods=['POST'])
 @login_required
+@requires_one_of_roles("schachten")
 def schachten_delete(id):
     schacht = Schacht.query.get_or_404(id)
     db.session.delete(schacht)
@@ -114,6 +119,7 @@ def schachten_delete(id):
 
 @app.route('/opdrachten', methods=['GET', 'POST'])
 @login_required
+@requires_one_of_roles("schachten")
 def schachtenopdrachten():
     opdrachten = SchachtenOpdracht.query.all()
     opdracht_form = SchachtenOpdrachtForm()
@@ -130,6 +136,7 @@ def schachtenopdrachten():
 
 @app.route('/opdrachten/<id>', methods=['GET','POST'])
 @login_required
+@requires_one_of_roles("schachten")
 def schachtenopdrachten_update(id):
     opdracht = SchachtenOpdracht.query.get_or_404(id)
     opdracht_form = SchachtenOpdrachtForm()
@@ -152,6 +159,7 @@ def schachtenopdrachten_update(id):
 
 @app.route('/opdrachten/<id>/delete', methods=['POST'])
 @login_required
+@requires_one_of_roles("schachten")
 def schachtenopdrachten_delete(id):
     opdracht = SchachtenOpdracht.query.get_or_404(id)
     db.session.delete(opdracht)
@@ -175,12 +183,14 @@ def input():
 
 @app.route('/inputs')
 @login_required
+@requires_one_of_roles("tools")
 def inputs():
     inputs = Input.query.all()
     return render_template('/inputs/admin.html', inputs=inputs)
 
 @app.route('/inputs/<id>/delete', methods=['POST'])
 @login_required
+@requires_one_of_roles("tools")
 def inputs_delete(id):
     input = Input.query.filter_by(id=id).first()
     db.session.delete(input)
@@ -191,6 +201,7 @@ def inputs_delete(id):
 # Users (and poef because related to users)
 @app.route('/users', methods=['GET', 'POST'])
 @login_required
+@requires_one_of_roles("gebruikers")
 def users():
     users = User.query.all()
     user_form = UserForm()
@@ -204,6 +215,7 @@ def users():
 
 @app.route('/users/<id>', methods=['GET', 'POST'])
 @login_required
+@requires_one_of_roles("gebruikers")
 def users_update(id):
     user = User.query.get_or_404(id)
     usernameform = UserUsernameForm()
@@ -233,6 +245,7 @@ def users_update(id):
 
 @app.route('/user/<id>/delete', methods=['POST'])
 @login_required
+@requires_one_of_roles("gebruikers")
 def users_delete(id):
     """Self-delete trough profile page or delete through users admin page."""
     user = User.query.filter_by(id=id).first()
@@ -259,7 +272,7 @@ def users_delete(id):
 @login_required
 def profile():
     user = User.query.filter_by(username=session.get('username',None)).first()
-    transactions = PoefTransaction.query.filter_by(user=user.id).all()
+    transactions = PoefTransaction.query.filter_by(user_id=user.id).all()
     poef = 0
     for transaction in transactions:
         poef += transaction.amount
@@ -282,11 +295,12 @@ def profile():
 
 @app.route('/poef')
 @login_required
+@requires_one_of_roles("poef")
 def users_poef():
     users = User.query.all()
     poef = dict()
     for user in users:
-        poef_transactions = PoefTransaction.query.filter_by(user=user.id).all()
+        poef_transactions = PoefTransaction.query.filter_by(user_id=user.id).all()
         debt = 0
         for transaction in poef_transactions:
             debt += transaction.amount
@@ -295,9 +309,10 @@ def users_poef():
 
 @app.route('/poef/<id>', methods=['GET','POST'])
 @login_required
+@requires_one_of_roles("poef")
 def users_poef_update(id):
     user = User.query.get_or_404(id)
-    transactions = PoefTransaction.query.order_by(PoefTransaction.date.desc()).filter_by(user=id).all()
+    transactions = PoefTransaction.query.order_by(PoefTransaction.date.desc()).filter_by(user_id=id).all()
     transaction_form = PoefTransactionForm()
     if transaction_form.validate_on_submit():
         # convert amount to cents
@@ -310,6 +325,7 @@ def users_poef_update(id):
 
 @app.route('/poef/<user_id>/transaction/<transaction_id>/delete', methods=['POST'])
 @login_required
+@requires_one_of_roles("poef")
 def users_poef_delete(user_id,transaction_id):
     transaction = PoefTransaction.query.get_or_404(transaction_id)
     db.session.delete(transaction)
@@ -337,6 +353,7 @@ def augustjes_read(id):
 
 @app.route('/augustjes', methods=['GET', 'POST'])
 @login_required
+@requires_one_of_roles("tools")
 def augustjes_admin():
     augustjes = Augustje.query.order_by(Augustje.date.desc()).all()
     augustje_form = AugustjeForm()
@@ -350,6 +367,7 @@ def augustjes_admin():
 
 @app.route('/augustjes/<id>', methods=['GET','POST'])
 @login_required
+@requires_one_of_roles("tools")
 def augustjes_update(id):
     augustje = Augustje.query.get_or_404(id)
     augustje_form = AugustjeForm()
@@ -365,6 +383,7 @@ def augustjes_update(id):
 
 @app.route("/augustjes/<id>/delete", methods=["POST"])
 @login_required
+@requires_one_of_roles("tools")
 def augustjes_delete(id):
     augustje = Augustje.query.get_or_404(id)
     db.session.delete(augustje)
@@ -374,12 +393,14 @@ def augustjes_delete(id):
 
 @app.route('/subscribers')
 @login_required
+@requires_one_of_roles("tools")
 def augustjesubscribers():
     subscribers = AugustjeSubscriber.query.order_by(AugustjeSubscriber.name).all()
     return render_template('/augustjes/subscribers.html', subscribers=subscribers)
 
 @app.route('/subscribers/<id>/delete', methods=['POST'])
 @login_required
+@requires_one_of_roles("tools")
 def augustjesubscribers_delete(id):
     subscriber = AugustjeSubscriber.query.get_or_404(id)
     db.session.delete(subscriber)
@@ -424,6 +445,7 @@ def muilgraaf_add_link():
 # Voting
 @app.route('/elections',methods=['GET','POST'])
 @login_required
+@requires_one_of_roles("stemmingen")
 def elections():
     elections = Election.query.all()
     electionform = ElectionForm()
@@ -438,6 +460,7 @@ def elections():
 
 @app.route('/elections/<id>/toggle-visibility',methods=['POST'])
 @login_required
+@requires_one_of_roles("stemmingen")
 def elections_toggle_visibility(id):
     election = Election.query.get_or_404(id)
     election.open = (election.open+1)%2
@@ -447,16 +470,17 @@ def elections_toggle_visibility(id):
 
 @app.route('/elections/<id>',methods=['GET','POST'])
 @login_required
+@requires_one_of_roles("stemmingen")
 def elections_update(id):
     election = Election.query.get_or_404(id)
-    options = ElectionOption.query.filter_by(election=id).all()
+    options = election.options
     vote_count = dict()
     for option in options:
-        vote_count[option.id] = db.session.query(votes).filter_by(electionid=id,optionid=option.id).count()
+        vote_count[option.id] = db.session.query(votes).filter_by(optionid=option.id).count()
     electionform = ElectionForm()
     optionform = ElectionOptionForm()
     if optionform.submitoption.data and optionform.validate_on_submit():
-        new_option = ElectionOption(name=optionform.name.data,election=id)
+        new_option = ElectionOption(name=optionform.name.data,election_id=id)
         db.session.add(new_option)
         db.session.commit()
         flash('Optie toegevoegd.',category='primary')
@@ -472,6 +496,7 @@ def elections_update(id):
 
 @app.route('/elections/<id>/delete',methods=['POST'])
 @login_required
+@requires_one_of_roles("stemmingen")
 def elections_delete(id):
     election = Election.query.get_or_404(id)
     db.session.delete(election)
@@ -481,6 +506,7 @@ def elections_delete(id):
 
 @app.route('/elections/<electionid>/option/<optionid>/delete',methods=['POST'])
 @login_required
+@requires_one_of_roles("stemmingen")
 def elections_delete_option(electionid,optionid):
     option = ElectionOption.query.get_or_404(optionid)
     db.session.delete(option)
@@ -490,6 +516,7 @@ def elections_delete_option(electionid,optionid):
 
 @app.route('/elections/keys',methods=['GET','POST'])
 @login_required
+@requires_one_of_roles("stemmingen")
 def keys():
     if request.method == 'POST':
         valid = False
@@ -508,6 +535,7 @@ def keys():
 
 @app.route('/elections/keys/all/delete',methods=['POST'])
 @login_required
+@requires_one_of_roles("stemmingen")
 def delete_all_keys():
     db.session.query(VoterKey).delete()
     db.session.commit()
@@ -516,6 +544,7 @@ def delete_all_keys():
 
 @app.route('/elections/keys/<id>/delete',methods=['POST'])
 @login_required
+@requires_one_of_roles("stemmingen")
 def keys_delete(id):
     key = VoterKey.query.get_or_404(id)
     db.session.delete(key)
@@ -524,7 +553,6 @@ def keys_delete(id):
     return redirect(url_for('keys'))
 
 @app.route('/stem',methods=['GET','POST'])
-@login_required
 def vote_overview():
     keyform = VoterKeyForm()
     if keyform.submitkey.data and keyform.validate_on_submit():
@@ -532,6 +560,7 @@ def vote_overview():
         key = VoterKey.query.filter_by(key=keyform.key.data).first()
         if key:
             session['voterid'] = key.id
+            return redirect(url_for('vote_overview'))
         else:
             flash('Login mislukt.',category='danger')
             return redirect(url_for('vote_overview'))
@@ -539,32 +568,37 @@ def vote_overview():
     return render_template('/voting/overview.html',keyform=keyform,elections=elections)
 
 @app.route('/stem/<id>',methods=['GET','POST'])
-@login_required
 def vote(id):
     # check if already logged in to voting
     if not session.get('voterid',None):
         return redirect(url_for('vote_overview'))
-    # initialize form
+    # initialize form and check if still votes left for this election
     voteform = VoteForm()
-    options = ElectionOption.query.filter_by(election=id).all()
+    previous_votes = []
+    options = ElectionOption.query.filter_by(election_id=id).all()
     for option in options:
         voteform.option.choices.append((option.id,option.name))
-    # check if still votes left for this election
-    previous_votes = db.session.query(votes).filter_by(electionid=id,voterkey=session.get('voterid')).all()
+        prev = db.session.query(votes).filter_by(optionid=option.id,voterkey=session.get('voterid')).all()
+        previous_votes.extend(prev)
     election = Election.query.get_or_404(id)
     if voteform.validate_on_submit():
         if len(previous_votes) >= election.votesperperson:
             flash('Al max aantal keren gestemd.',category='danger')
             return redirect(url_for('vote_overview'))
-        db.session.execute(votes.insert().values(voterkey=session.get('voterid'),electionid=id,optionid=voteform.option.data))
-        db.session.commit()
-        flash('Gestemd.',category='primary')
-        return redirect(url_for('vote',id=id))
+        if len([vote for vote in previous_votes if vote.optionid is voteform.option.data]) is 0:
+            db.session.execute(votes.insert().values(voterkey=session.get('voterid'),optionid=voteform.option.data))
+            db.session.commit()
+            flash('Gestemd.',category='primary')
+            return redirect(url_for('vote',id=id))
+        else:
+            flash('Meerdere keren op dezelfde optie stemmen is niet toegelaten.',category='danger')
+            return redirect(url_for('vote',id=id))
     return render_template('/voting/stem.html',previous_votes=previous_votes,election=election,voteform=voteform)
 
 # Bar
 @app.route('/bar',methods=['GET','POST'])
 @login_required
+@requires_one_of_roles("tools")
 def bar():
     items = BarItem.query.order_by(BarItem.name).all()
     transactions = BarTransaction.query.order_by(BarTransaction.date.desc()).limit(10).all()
@@ -579,6 +613,7 @@ def bar():
 
 @app.route('/bar/items/<id>',methods=['GET','POST'])
 @login_required
+@requires_one_of_roles("tools")
 def bar_items(id):
     item = BarItem.query.get_or_404(id)
     itemform = BarItemForm()
@@ -599,6 +634,7 @@ def bar_items(id):
 
 @app.route('/bar/items/<id>/delete',methods=['POST'])
 @login_required
+@requires_one_of_roles("tools")
 def bar_items_delete(id):
     item = BarItem.query.get_or_404(id)
     db.session.delete(item)
@@ -608,6 +644,7 @@ def bar_items_delete(id):
 
 @app.route('/bar/transaction',methods=['POST'])
 @login_required
+@requires_one_of_roles("tools")
 def bar_transaction():
     data = request.get_json()
     # check if not empty
@@ -633,14 +670,15 @@ def bar_transaction():
 
 @app.route('/bar/transaction/<id>/delete',methods=['POST'])
 @login_required
+@requires_one_of_roles("tools")
 def bar_transaction_delete(id):
     transaction = BarTransaction.query.get_or_404(id)
     order = json.loads(transaction.order)
     # undo poef if poeftransaction
     if transaction.poeftransaction:
-        # only penning can undo poef transactions
-        if not 'penning' in session['roles']:
-            return "Not penning", 403
+        # only poef role can undo poef transactions
+        if not 'poef' in session['roles']:
+            return "Not poef", 403
         poef_transaction = PoefTransaction.query.get_or_404(transaction.poeftransaction)
         db.session.delete(poef_transaction)
     # update inventory back
@@ -658,6 +696,7 @@ def bar_transaction_delete(id):
 
 @app.route('/bar/kassa')
 @login_required
+@requires_one_of_roles("tools")
 def bar_kassa():
     items = BarItem.query.order_by(BarItem.name).all()
     poef_users = User.query.order_by(User.fullname).filter(User.roles.contains('poef'))
