@@ -316,7 +316,7 @@ def users_poef_update(id):
     transaction_form = PoefTransactionForm()
     if transaction_form.validate_on_submit():
         # convert amount to cents
-        new_transaction = PoefTransaction(amount=int(transaction_form.amount.data*100),description=transaction_form.description.data,user=id)
+        new_transaction = PoefTransaction(amount=int(transaction_form.amount.data*100),description=transaction_form.description.data,user_id=id)
         db.session.add(new_transaction)
         db.session.commit()
         flash('Toegevoegd.',category='primary')
