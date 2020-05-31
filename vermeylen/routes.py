@@ -1,11 +1,11 @@
-from flask import render_template, request, session, redirect, flash, url_for
+from flask import render_template, request, session, redirect, flash, url_for, make_response
 from flask_mail import Message
 from vermeylen import app, mail, bcrypt
 from vermeylen.decorators import *
 from vermeylen.models import *
 from vermeylen.forms import *
 from threading import Thread
-import string, random, json
+import string, random, json, csv, io
 
 def send_async_email(app, msg):
     with app.app_context():
@@ -82,6 +82,22 @@ def schachten():
         flash('Schacht toegevoegd.',category='primary')
         return redirect(url_for('schachten'))
     return render_template('/schachten/admin.html', schachten=schachten, schacht_form=schacht_form,points=points)
+
+@app.route('/exportschachten', methods=['GET'])
+@login_required
+@requires_one_of_roles("tools")
+def schachten_export():
+    si = io.StringIO()
+    cw = csv.writer(si,dialect=csv.excel)
+    schachten = Schacht.query.all()
+    for schacht in schachten:
+        row = [schacht.name + ' (' + str(sum([task.points for task in schacht.tasks])) + ' punten)' ]
+        row.extend([task.name + ' ('+str(task.points)+')' for task in schacht.tasks])
+        cw.writerow(row)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
 
 @app.route('/schachten/<id>', methods=['GET','POST'])
 @login_required
@@ -176,7 +192,7 @@ def input():
         db.session.add(new_input)
         db.session.commit()
         flash('Bedankt voor de feedback!', category="primary")
-        msg = Message(subject='[site] Nieuwe input',sender='noreply.vermeylen@gmail.com', recipients=['xavier.claerhoudt@gmail.com'],body=input_form.input.data)
+        msg = Message(subject='[site] Nieuwe input',sender='noreply.vermeylen@gmail.com', recipients=['homeraadvermeylen@gmail.com'],body=input_form.input.data)
         Thread(target=send_async_email, args=(app, msg)).start()
         return redirect(url_for('input'))
     return render_template('/inputs/input.html', input_form=input_form)
@@ -245,13 +261,16 @@ def users_update(id):
 
 @app.route('/user/<id>/delete', methods=['POST'])
 @login_required
-@requires_one_of_roles("gebruikers")
 def users_delete(id):
     """Self-delete trough profile page or delete through users admin page."""
-    user = User.query.filter_by(id=id).first()
+    user = User.query.get_or_404(id)
+    # allow only self-delete or gebruikers role
+    if not user.username == session.get('username',None) and 'gebruikers' not in session.get('roles',None):
+        flash('Niet toegelaten.',category='danger')
+        return redirect(url_for('home'))
     # check if there is still a poef that needs to be paid
     poef = 0
-    transactions = PoefTransaction.query.filter_by(user=id).all()
+    transactions = PoefTransaction.query.filter_by(user_id=id).all()
     for transaction in transactions:
         poef += transaction.amount
     if poef != 0:
@@ -295,9 +314,9 @@ def profile():
 
 @app.route('/poef')
 @login_required
-@requires_one_of_roles("poef")
+@requires_one_of_roles("penning")
 def users_poef():
-    users = User.query.all()
+    users = User.query.filter(User.roles.contains('poef')).all()
     poef = dict()
     for user in users:
         poef_transactions = PoefTransaction.query.filter_by(user_id=user.id).all()
@@ -309,7 +328,7 @@ def users_poef():
 
 @app.route('/poef/<id>', methods=['GET','POST'])
 @login_required
-@requires_one_of_roles("poef")
+@requires_one_of_roles("penning")
 def users_poef_update(id):
     user = User.query.get_or_404(id)
     transactions = PoefTransaction.query.order_by(PoefTransaction.date.desc()).filter_by(user_id=id).all()
@@ -325,7 +344,7 @@ def users_poef_update(id):
 
 @app.route('/poef/<user_id>/transaction/<transaction_id>/delete', methods=['POST'])
 @login_required
-@requires_one_of_roles("poef")
+@requires_one_of_roles("penning")
 def users_poef_delete(user_id,transaction_id):
     transaction = PoefTransaction.query.get_or_404(transaction_id)
     db.session.delete(transaction)
@@ -429,6 +448,30 @@ def muilgraaf_add_person():
         flash('Persoon toegevoegd.',category='primary')
         return redirect(url_for('muilgraaf'))
     return render_template('/muilgraaf/person_error.html',person_form=person_form)
+
+@app.route('/muilgraaf/person/<id>/delete', methods=['POST', 'GET'])
+@login_required
+def muilgraaf_delete_person(id):
+    person = MuilgraafPerson.query.get_or_404(id)
+    links = MuilgraafLink.query.filter_by(person_1=id).all()
+    for link in links:
+        db.session.delete(link)
+    links = MuilgraafLink.query.filter_by(person_2=id).all()
+    for link in links:
+        db.session.delete(link)
+    db.session.delete(person)
+    db.session.commit()
+    flash('Persoon verwijderd.',category='primary')
+    return redirect(url_for('muilgraaf'))
+
+@app.route('/muilgraaf/link/<id>/delete', methods=['POST', 'GET'])
+@login_required
+def muilgraaf_delete_link(id):
+    link = MuilgraafLink.query.get_or_404(id)
+    db.session.delete(link)
+    db.session.commit()
+    flash('Link verwijderd.',category='primary')
+    return redirect(url_for('muilgraaf'))
 
 @app.route('/muilgraaf/link', methods=['POST', 'GET'])
 @login_required
@@ -659,7 +702,7 @@ def bar_transaction():
     new_transaction = BarTransaction(price=data['price'],order=json.dumps(order))
     # add poeftransaction if poef
     if data.get('poef',None):
-        poef_transaction = PoefTransaction(amount=data['price'],user=data['poef'],description=json.dumps(order))
+        poef_transaction = PoefTransaction(amount=data['price'],user_id=data['poef'],description=json.dumps(order))
         db.session.add(poef_transaction)
         db.session.flush()
         new_transaction.poeftransaction = poef_transaction.id
@@ -676,9 +719,9 @@ def bar_transaction_delete(id):
     order = json.loads(transaction.order)
     # undo poef if poeftransaction
     if transaction.poeftransaction:
-        # only poef role can undo poef transactions
-        if not 'poef' in session['roles']:
-            return "Not poef", 403
+        # only penning role can undo poef transactions
+        if not 'penning' in session['roles']:
+            return "Not penning", 403
         poef_transaction = PoefTransaction.query.get_or_404(transaction.poeftransaction)
         db.session.delete(poef_transaction)
     # update inventory back
